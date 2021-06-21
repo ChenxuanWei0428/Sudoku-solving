@@ -8,11 +8,11 @@ __author__ = "Austin Wei"
 
 class Board(object):
 
-    _difficult_level = {'Easy': (5, 5), 'Medium': (10, 10), 'Hard': (20, 20)}
-    _oppo_d = {(5, 5): 'Easy', (10, 10): 'Medium', (20, 20): 'Hard'}
+    _difficult_level = {'Easy': (4, 4), 'Medium': (9, 9), 'Hard': (16, 16)}
+    _oppo_d = {(4, 4): 'Easy', (9, 9): 'Medium', (16, 16): 'Hard'}
     
     #Constructor of the class Board
-    def __init__(self, length=5, width=5):
+    def __init__(self, length=9, width=9):
         self._length = length
         self._width = width
         self._difficulty = "customize"
