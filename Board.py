@@ -1,68 +1,57 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-" This is the board for the landmine game "
+" This is the board for a soduku solver "
 
 __author__ = "Austin Wei"
 
 
 class Board(object):
 
-    _difficult_level = {'Easy': (4, 4), 'Medium': (9, 9), 'Hard': (16, 16)}
-    _oppo_d = {(4, 4): 'Easy', (9, 9): 'Medium', (16, 16): 'Hard'}
-    
     #Constructor of the class Board
-    def __init__(self, length=9, width=9):
-        self._length = length
-        self._width = width
-        self._difficulty = "customize"
-        self._check_diff()
+    # board is a 2d array
+    # the topleft corner is consider as(0, 0)
+    # the bottom right is consider as (8, 8)
+    # 0 on the suduku means it is a empty block
+    def __init__(self, board):
+        self._board = board
+        self._length = len(board)
         
     #Get attribute length
     def get_length(self):
         return self._length
 
-    #Get attribute width
-    def get_width(self):
-        return self._width
+    def get_board(self):
+        return self._board
 
-    #Get attribute width
-    def get_difficulty(self):
-        return self._difficulty
-
-    #check which difficult it is with current dimension
-    def _check_diff(self):
-        dim = (self._length, self._width)
-        if self._oppo_d.__contains__(dim):
-            self._difficulty = self._oppo_d.get(dim)
-        else:
-            self._difficulty = "Customized"
-    
     #Set attribute length
     def set_length(self, length):
-        l = int(length)
-        if 0 < l:
-            self._length = l
-            self._check_diff()
+        if 0 < length:
+            self._length = length
         else:
             raise ValueError('Invalid Length')
+  
+    #check if a number can be written down validly in a position
+    def check_valid(self, x, y, num):
+        # check horizontal:
+        for w in range(self.get_length()):
+            if (self.get_board()[y][w] == num):
+                return False
 
-    #Set attribute width
-    def set_width(self, width):
-        w = int(width)
-        if 0 < w:
-            self._width = w
-            self._check_diff()
-        else:
-            raise ValueError('Invalid Width')
-    
-    #Set difficult 
-    def set_difficulty(self, diff):
-        if self._difficult_level.__contains__(diff):
-            self._length, self._width =self._difficult_level.get(diff)
-            self._difficulty = diff
-        else:
-            raise ValueError('Invalid Difficulty')
-            
+        # check vertical:
+        for l in range(self.get_length()):
+            if (self.get_board()[l][x] == num):
+                return False
+
+        #check each individual box
+        for sl in range(x//3 * 3, (x//3 + 1) * 3):
+            for sw in range(y//3 * 3, (y//3 + 1) * 3):
+                if (self.get_board()[sw][sl] == num):
+                    return False
         
-        
+        #if there are no conflict, then it is valid
+        return True
+
+    #use backtrack to solve the soduku
+    def solve(self):
+        pass
