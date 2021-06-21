@@ -8,7 +8,7 @@ __author__ = "Austin Wei"
 
 class Board(object):
 
-    #Constructor of the class Board
+    # Constructor of the class Board
     # board is a 2d array
     # the topleft corner is consider as(0, 0)
     # the bottom right is consider as (8, 8)
