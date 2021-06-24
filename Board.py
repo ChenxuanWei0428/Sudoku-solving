@@ -88,6 +88,7 @@ class Board(object):
         # if the board is full
         return None
 
+    
     # solve() Use backtrack to solve the soduku by modify the existing board
     # -> Board
     def solve(self):
@@ -124,6 +125,7 @@ class Board(object):
         else:
             print("There is a solution!")
         return self
+    
     
     # print_board() print the board in a good way
     # effect: Produce Outputs
