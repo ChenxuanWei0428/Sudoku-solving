@@ -88,7 +88,42 @@ class Board(object):
         # if the board is full
         return None
 
-    #need solve method
+    # solve() Use backtrack to solve the soduku by modify the existing board
+    # -> Board
+    def solve(self):
+
+        # solve_board(board) try to solve the board use backtrack recursion, while modify the board
+        def solve_board(b):
+            cell = b.find_empty()
+            # if the board is full
+            if cell is None:
+                return b
+            row = cell[0]
+            col = cell[1]
+            
+            # Try 1 - 9 on the empty cell
+            for val in range(1, 10):
+                #if it is a valid number
+                if b.check_valid(row, col, val):
+                    # set it to the valid number
+                    b.set_cell(row, col, val)
+                    # try to solve the next sudoku this the value set
+                    temp_sol = solve_board(b)
+                    # if you find a solution, just return it
+                    if temp_sol is not None:
+                        return temp_sol       
+                    # Important step: back track to set it back to 0, if the try we have did not work
+                    b.set_cell(row, col, 0)
+
+            # If no solution, return None to indicate that
+            return None 
+        
+        result = solve_board(self)
+        if result is None:
+            print("No solution")
+        else:
+            print("There is a solution!")
+        return self
     
     # print_board() print the board in a good way
     # effect: Produce Outputs
