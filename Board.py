@@ -31,7 +31,8 @@ class Board(object):
         return self._board
 
 
-    #
+    # set_cell(row, col, val) set the cell value at row, col to val
+    # int, int, int -> 
     def set_cell(self, row, col, val):
         self._board[row][col] = val
 
