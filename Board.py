@@ -7,6 +7,8 @@ __author__ = "Austin Wei"
 
 
 class Board(object):
+    __slots__ = ("_board", "_length")
+
 
     '''
     This is the contructor of the board
@@ -19,49 +21,60 @@ class Board(object):
         self._length = len(board)
 
 
-    # get_length() return the length of the board
-    #  -> int
-    def get_length(self):
+    '''
+    Purpose: Board.get_length() return the length of the board
+    Contract: -> int
+    '''
+    @property
+    def length(self):
         return self._length
 
 
-    # get_board() return the board in 2D array
-    #  -> int[][]
-    def get_board(self):
+    '''
+    Purpose: Board.get_board() return the board in 2D array
+    Contract: -> int[][]
+    '''
+    @property
+    def board(self):
         return self._board
 
 
-    # set_cell(row, col, val) set the cell value at row, col to val
-    # int, int, int -> 
+    '''
+    Purpose: Board.set_cell(row, col, val) set the cell value at row, col to val
+    Effect: modify the selected cell 
+    '''
     def set_cell(self, row, col, val):
         self._board[row][col] = val
 
 
-    # set_length(length) set the length of the board
-    # int ->
-    def set_length(self, length):
+    '''
+    Purpose: Board.set_length(length) set the length of the board
+    Effect: modify Board._length
+    '''
+    @length.setter
+    def length(self, length):
         if 0 < length:
             self._length = length
         else:
             raise ValueError('Invalid Length')
   
 
-    # check_valid(row, col, num) check if a number can be written down validly in a position
     '''
-    row and col are the row and column position we are looking for
-    num is the number you are trying
-    Return a Boolean Value
+    Purpose: check_valid(row, col, num) check if a number can be written down validly in a position
+            row and col are the row and column position we are looking for
+            num is the number you are trying
+            Return a Boolean Value
+    Contract: int, int, int -> bool
     '''
-    # int, int, int -> bool
     def check_valid(self, row, col, num):
         # check the row:
-        for i in range(self.get_length()):
-            if (self.get_board()[row][i] == num):
+        for i in range(self.length):
+            if (self.board[row][i] == num):
                 return False
 
         # check the column:
-        for i in range(self.get_length()):
-            if (self.get_board()[i][col] == num):
+        for i in range(self.length):
+            if (self.board[i][col] == num):
                 return False
 
         #check each individual box
@@ -71,26 +84,31 @@ class Board(object):
         '''
         for br in range(row//3 * 3, (row//3 + 1) * 3):
             for bc in range(col//3 * 3, (col//3 + 1) * 3):
-                if (self.get_board()[br][bc] == num):
+                if (self.board[br][bc] == num):
                     return False
         
         #if there are no conflict in row, column and cell, then it is valid
         return True
 
 
-    # find_empty() return the first empty cell 
-    #  -> [row, col]
+    '''
+    Purpose: Board.find_empty() return the first empty cell 
+    Contract: -> [row, col]
+    '''
     def find_empty(self):
         for row in range(9):
             for col in range(9):
-                if (self.get_board()[row][col] == 0):
+                if (self.board[row][col] == 0):
                     return [row, col]
         # if the board is full
         return None
 
-    
-    # solve() Use backtrack to solve the soduku by modify the existing board
-    # -> Board
+
+    '''
+    Purpose: Board.solve() Use backtrack to solve the soduku by modify the existing board
+            if there is no solution, will return the board with most of the part solved
+    Contract -> Board
+    '''
     def solve(self):
 
         # solve_board(board) try to solve the board use backtrack recursion, while modify the board
@@ -125,10 +143,12 @@ class Board(object):
         else:
             print("There is a solution!")
         return self
-    
-    
-    # print_board() print the board in a good way
-    # effect: Produce Outputs
+                    
+
+    '''
+    Purpose: Board.print_board() print the board in a good way
+    Effect: Produce Outputs
+    '''
     def print_board(self):
         #this is the line at the top and bottom of the board, and for seperate the cells
         break_line = "-------------------------"
@@ -140,7 +160,7 @@ class Board(object):
                 s = "|" # include the begin bar
                 for col in range(9):
                     s = s + " "
-                    val = self.get_board()[row][col]
+                    val = self.board[row][col]
 
                     if (val != 0):
                         s = s + str(val) # print the value
