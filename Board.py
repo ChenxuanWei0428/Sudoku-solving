@@ -60,10 +60,10 @@ class Board(object):
   
 
     '''
-    Purpose: check_valid(row, col, num) check if a number can be written down validly in a position
-            row and col are the row and column position we are looking for
-            num is the number you are trying
-            Return a Boolean Value
+    Purpose: Board.check_valid(row, col, num) check if a number can be written down validly in a position
+             row and col are the row and column position we are looking for
+             num is the number you are trying
+             Return a Boolean Value
     Contract: int, int, int -> bool
     '''
     def check_valid(self, row, col, num):
@@ -106,7 +106,7 @@ class Board(object):
 
     '''
     Purpose: Board.solve() Use backtrack to solve the soduku by modify the existing board
-            if there is no solution, will return the board with most of the part solved
+             if there is no solution, will return the board with most of the part solved
     Contract -> Board
     '''
     def solve(self):
