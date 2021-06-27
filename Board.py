@@ -138,10 +138,6 @@ class Board(object):
             return None 
         
         result = solve_board(self)
-        if result is None:
-            print("No solution")
-        else:
-            print("There is a solution!")
         return self
                     
 
