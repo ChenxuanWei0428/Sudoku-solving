@@ -68,7 +68,7 @@ def solve():
 
 
 ''' 
-Purpose: submit() is a tikinter command to check if the answer matches the given answer
+Purpose: submit() is a tkinter command to check if the answer matches the given answer
 effect: edit the entrys and indicate weather it is true or not
 '''
 def submit():
