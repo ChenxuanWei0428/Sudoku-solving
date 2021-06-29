@@ -19,6 +19,10 @@ init_board = Board.Board(current_board)
 # this is a 2d list of tkinter.Entry
 sudoku_board = []
 
+# the two frame, one is for the board, other for the bottoms
+board_frame = tkinter.Frame(main_board, width = 200, height = 200)
+bottom_frame = tkinter.Frame(main_board)
+
 
 '''
 Purpose: input_row(board_row) Return a 1D array of entry in tk which include one row of the board
@@ -28,7 +32,7 @@ def input_row (board_row):
     temp_row = []
     l = len(board_row)
     for i in range(l):
-        temp_row.append(tkinter.Entry(main_board, font = 10, width = 3))
+        temp_row.append(tkinter.Entry(board_frame, font = 10, width = 3))
         if board_row[i] != 0:
             temp_row[i].insert(0, board_row[i])
     return temp_row
@@ -66,6 +70,8 @@ def solve():
             sudoku_board[row][entry].delete(0, 'end')
             sudoku_board[row][entry].insert(0, init_board.board[row][entry])
 
+    status_text = tkinter.Label(bottom_frame, text = "The solution is presented")
+    status_text.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 ''' 
 Purpose: submit() is a tkinter command to check if the answer matches the given answer
@@ -78,6 +84,10 @@ def submit():
             # If it is not blank and it does not match the solution board, remove it
             if (len(sudoku_board[row][entry].get()) != 0 and int(sudoku_board[row][entry].get()) != init_board.board[row][entry]):
                 sudoku_board[row][entry].delete(0, 'end')
+    
+    #need edit
+    status_text = tkinter.Label(bottom_frame, text = "You just submitted you work!")
+    status_text.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 
 '''
@@ -85,8 +95,8 @@ Purpose: add_solve_botton_to_screen() add the solve botton to the screen
 effect: modify main_board()
 '''
 def add_solve_botton_to_screen():
-    solve_botton = tkinter.Button(main_board, text = "solve!", command = (lambda: solve()), height = 1, width = 1)
-    solve_botton.grid(row = 10, column = 6, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+    solve_botton = tkinter.Button(bottom_frame, text = "solve!", command = (lambda: solve()), height = 1, width = 1)
+    solve_botton.grid(row = 1, column = 1, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 
 '''   
@@ -94,8 +104,8 @@ Purpsoe: add_submit button to screen() add the submit botton for user to the scr
 effect: modify main_board()
 '''
 def add_submit_botton_to_screen():
-    submit_botton = tkinter.Button(main_board, text = "submit!", command = (lambda: submit()), height = 1, width = 1)
-    submit_botton.grid(row = 10, column = 2, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+    submit_botton = tkinter.Button(bottom_frame, text = "submit!", command = (lambda: submit()), height = 1, width = 1)
+    submit_botton.grid(row = 1, column = 2, padx = 10, pady = 10, ipadx = 20, ipady = 10)
 
 
 '''
@@ -103,9 +113,8 @@ Purpose: add_status_text_to_screen() add a status bar to the screen, shows, weat
 effect: modify main_board()
 '''
 def add_status_text_to_screen():
-    status_text = tkinter.Entry(main_board, state = 'disabled')
-    status_text.insert(0, "Welcome to Sudoku Game!")
-    status_text.grid(row = 11, column = 5, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+    status_text = tkinter.Label(bottom_frame, text = "Welcome to Sudoku Game!")
+    status_text.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 
 
@@ -116,7 +125,7 @@ def start():
     add_solve_botton_to_screen()
     add_submit_botton_to_screen()
     add_status_text_to_screen()
+    board_frame.pack()
+    bottom_frame.pack()
     init_board.solve()
     main_board.mainloop()
-
-    
