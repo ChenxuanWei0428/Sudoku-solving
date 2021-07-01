@@ -12,7 +12,6 @@ main_board.title("Sudoku Solver")
 main_board.geometry('750x700')
 
 current_board = Temp_board.b
-
 # the board that is showed in the game
 init_board = Board.Board(current_board)
 
@@ -22,6 +21,9 @@ sudoku_board = []
 # the two frame, one is for the board, other for the bottoms
 board_frame = tkinter.Frame(main_board, width = 200, height = 200)
 bottom_frame = tkinter.Frame(main_board)
+
+# the status_text
+status_text = tkinter.Label(bottom_frame, text = "Welcome to Sudoku Game!")
 
 
 '''
@@ -73,21 +75,33 @@ def solve():
     status_text = tkinter.Label(bottom_frame, text = "The solution is presented")
     status_text.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
+
 ''' 
 Purpose: submit() is a tkinter command to check if the answer matches the given answer
 effect: edit the entrys and indicate weather it is true or not
 '''
 def submit():
+    correct = True
+    empty = False
     l = len(init_board.board)
     for row in range(l):
         for entry in range(l):
             # If it is not blank and it does not match the solution board, remove it
             if (len(sudoku_board[row][entry].get()) != 0 and int(sudoku_board[row][entry].get()) != init_board.board[row][entry]):
+                correct = False
                 sudoku_board[row][entry].delete(0, 'end')
+            elif (len(sudoku_board[row][entry].get()) == 0 ):
+                empty = True
     
-    #need edit
-    status_text = tkinter.Label(bottom_frame, text = "You just submitted you work!")
-    status_text.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+    status_text.pack_forget()
+    submit_label = tkinter.Label(bottom_frame)
+    if not correct:
+        sumbit_label = tkinter.Label(bottom_frame, text = "Please try again")
+    elif (empty):
+        sumbit_label = tkinter.Label(bottom_frame, text = "You still have empty space to fill!")
+    else:
+        submit_label = tkinter.Label(bottom_frame, text = "Great Job!")
+    submit_label.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 
 '''
@@ -113,19 +127,22 @@ Purpose: add_status_text_to_screen() add a status bar to the screen, shows, weat
 effect: modify main_board()
 '''
 def add_status_text_to_screen():
-    status_text = tkinter.Label(bottom_frame, text = "Welcome to Sudoku Game!")
     status_text.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 
 
 #start the Sudolu solver program
 def start():
+
     input_board(init_board)
+    
     add_to_screen(sudoku_board)
     add_solve_botton_to_screen()
     add_submit_botton_to_screen()
     add_status_text_to_screen()
     board_frame.pack()
     bottom_frame.pack()
+    
     init_board.solve()
+    
     main_board.mainloop()
