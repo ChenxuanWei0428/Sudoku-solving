@@ -105,41 +105,47 @@ class Board(object):
 
 
     '''
-    Purpose: Board.solve() Use backtrack to solve the soduku by modify the existing board
-             if there is no solution, will return the board with most of the part solved
-    Contract -> Board
+    Purpose: step_by_step() solve one step of the Sudoku, for present step by step solution
+    effect: modify board
     '''
-    def solve(self):
-
-        # solve_board(board) try to solve the board use backtrack recursion, while modify the board
-        def solve_board(b):
-            cell = b.find_empty()
+    def step_by_step(self):
+            cell = self.find_empty()
             # if the board is full
             if cell is None:
-                return b
+                return self
             row = cell[0]
             col = cell[1]
             
             # Try 1 - 9 on the empty cell
             for val in range(1, 10):
                 #if it is a valid number
-                if b.check_valid(row, col, val):
+                if self.check_valid(row, col, val):
                     # set it to the valid number
-                    b.set_cell(row, col, val)
+                    self.set_cell(row, col, val)
                     # try to solve the next sudoku this the value set
-                    temp_sol = solve_board(b)
+                    temp_sol = self.step_by_step()
                     # if you find a solution, just return it
                     if temp_sol is not None:
                         return temp_sol       
                     # Important step: back track to set it back to 0, if the try we have did not work
-                    b.set_cell(row, col, 0)
+                    self.set_cell(row, col, 0)
 
             # If no solution, return None to indicate that
             return None 
-        
-        result = solve_board(self)
-        return self
-                    
+
+
+    '''
+    Purpose: Board.solve() Use backtrack to solve the soduku by modify the existing board
+             if there is no solution, will return the board with most of the part solved
+    effect modify board
+    '''
+    def solve(self):
+
+        # step_by_step(board) try to solve the board use backtrack recursion, while modify the board
+        result = self.step_by_step()
+                  
+
+
 
     '''
     Purpose: Board.print_board() print the board in a good way

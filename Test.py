@@ -8,4 +8,7 @@ __author__ = "Austin Wei"
 import Board, Temp_board, GUI
 
 
-GUI.start()
+app = GUI.GUI()
+app.start()
+
+
