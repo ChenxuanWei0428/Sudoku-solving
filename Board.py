@@ -9,14 +9,24 @@ __author__ = "Austin Wei"
 class Board(object):
     __slots__ = ("_board", "_length")
 
-
+    b_empty = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
     '''
     This is the contructor of the board
     Arguments: Board = int[][]
     attributes: _board = int[][]
                 _length = int
     '''
-    def __init__(self, board):
+    def __init__(self, board = b_empty):
         self._board = board
         self._length = len(board)
 
