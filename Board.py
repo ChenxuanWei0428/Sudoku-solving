@@ -1,175 +1,201 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-" This is the board for a soduku solver "
+" This is the gui implemecation of the Sudoku solver "
 
 __author__ = "Austin Wei"
 
+import Board, tkinter, Temp_board, time
 
-class Board(object):
-    __slots__ = ("_board", "_length")
+class GUI :
+
+    def __init__(self):
+        self.main_board = tkinter.Tk()
+
+        # the two frame, one is for the board, other for the bottoms
+        self.board_frame = tkinter.Frame(self.main_board, width = 200, height = 200)
+        self.bottom_frame = tkinter.Frame(self.main_board)
+
+        #edit main_board
+        self.main_board.title("Sudoku Solver")
+        self.main_board.geometry('750x700')
+
+
+        # the board that is showed in the game
+        self.boardset = Temp_board.next()
+        self.current_board = self.boardset()
+        self.level_board = Board.Board(self.current_board)
+
+        # this is a 2d list of tkinter.Entry
+        self.sudoku_entry = []
+
+        # the two frame, one is for the board, other for the bottoms
+        self.board_frame = tkinter.Frame(self.main_board, width = 200, height = 200)
+        bottom_frame = tkinter.Frame(self.main_board)
+
+        # the status_text
+        self.status = tkinter.StringVar()
+        self.status.set("Welcome to Sudoku Game")
+        self.status_text = tkinter.Label(self.bottom_frame, textvariable=self.status)
+
+        self.submit_botton = tkinter.Button(self.bottom_frame, text = "submit!", command = (lambda: self.submit()), height = 1, width = 1)
+        self.solve_botton = tkinter.Button(self.bottom_frame, text = "solve!", command = (lambda: self.solve()), height = 1, width = 1)
+
+
+    '''    
+    Purpose input_level() input the level_board to the entrys
+    effect: modify sudoku_entry
+    '''
+    def input_level(self,):
+        l = len(self.sudoku_entry)
+        for row in range(l):
+            for cell in range(l):
+                if (self.level_board.board[row][cell] != 0):
+                    self.sudoku_entry[row][cell].insert(0, self.level_board.board[row][cell])
+        self.level_board.solve()
 
 
     '''
-    This is the contructor of the board
-    Arguments: Board = int[][]
-    attributes: _board = int[][]
-                _length = int
-    '''
-    def __init__(self, board):
-        self._board = board
-        self._length = len(board)
-
-
-    '''
-    Purpose: Board.get_length() return the length of the board
-    Contract: -> int
-    '''
-    @property
-    def length(self):
-        return self._length
-
-
-    '''
-    Purpose: Board.get_board() return the board in 2D array
-    Contract: -> int[][]
-    '''
-    @property
-    def board(self):
-        return self._board
-
-
-    '''
-    Purpose: Board.set_cell(row, col, val) set the cell value at row, col to val
-    Effect: modify the selected cell 
-    '''
-    def set_cell(self, row, col, val):
-        self._board[row][col] = val
-
-
-    '''
-    Purpose: Board.set_length(length) set the length of the board
-    Effect: modify Board._length
-    '''
-    @length.setter
-    def length(self, length):
-        if 0 < length:
-            self._length = length
-        else:
-            raise ValueError('Invalid Length')
-  
-
-    '''
-    Purpose: Board.check_valid(row, col, num) check if a number can be written down validly in a position
-             row and col are the row and column position we are looking for
-             num is the number you are trying
-             Return a Boolean Value
-    Contract: int, int, int -> bool
-    '''
-    def check_valid(self, row, col, num):
-        # check the row:
-        for i in range(self.length):
-            if (self.board[row][i] == num):
-                return False
-
-        # check the column:
-        for i in range(self.length):
-            if (self.board[i][col] == num):
-                return False
-
-        #check each individual box
-        '''
-        br = block row
-        bc = block column
-        '''
-        for br in range(row//3 * 3, (row//3 + 1) * 3):
-            for bc in range(col//3 * 3, (col//3 + 1) * 3):
-                if (self.board[br][bc] == num):
-                    return False
-        
-        #if there are no conflict in row, column and cell, then it is valid
-        return True
-
-
-    '''
-    Purpose: Board.find_empty() return the first empty cell 
-    Contract: -> [row, col]
-    '''
-    def find_empty(self):
-        for row in range(9):
-            for col in range(9):
-                if (self.board[row][col] == 0):
-                    return [row, col]
-        # if the board is full
-        return None
-
-
-    '''
-    Purpose: step_by_step() solve one step of the Sudoku, for present step by step solution
-    effect: modify board
-    '''
-    def step_by_step(self):
-            cell = self.find_empty()
-            # if the board is full
-            if cell is None:
-                return self
-            row = cell[0]
-            col = cell[1]
-            
-            # Try 1 - 9 on the empty cell
-            for val in range(1, 10):
-                #if it is a valid number
-                if self.check_valid(row, col, val):
-                    # set it to the valid number
-                    self.set_cell(row, col, val)
-                    # try to solve the next sudoku this the value set
-                    temp_sol = self.step_by_step()
-                    # if you find a solution, just return it
-                    if temp_sol is not None:
-                        return temp_sol       
-                    # Important step: back track to set it back to 0, if the try we have did not work
-                    self.set_cell(row, col, 0)
-
-            # If no solution, return None to indicate that
-            return None 
-
-
-    '''
-    Purpose: Board.solve() Use backtrack to solve the soduku by modify the existing board
-             if there is no solution, will return the board with most of the part solved
-    effect modify board
+    Purpose: solve() is a tkinter command for solve the sudoku, show the solution the input the next level
+    effect: edit the entrys and displace the solved board
     '''
     def solve(self):
+        l = len(self.level_board.board)
+        for row in range(l):
+            for entry in range(l):
+                self.sudoku_entry[row][entry].delete(0, 'end')
+                self.sudoku_entry[row][entry].insert(0, self.level_board.board[row][entry])
 
-        # step_by_step(board) try to solve the board use backtrack recursion, while modify the board
-        result = self.step_by_step()
-                  
+        self.status.set("The solution is presented")
+        # need to learn why this is not working
+        #time.sleep(5)
+        self.next_level()
 
 
-
+    ''' 
+    Purpose: submit() is a tkinter command to check if the answer matches the given answer
+    effect: edit the entrys and indicate weather it is true or not
     '''
-    Purpose: Board.print_board() print the board in a good way
-    Effect: Produce Outputs
-    '''
-    def print_board(self):
-        #this is the line at the top and bottom of the board, and for seperate the cells
-        break_line = "-------------------------"
+    def submit(self):
+        correct = True
+        empty = False
+        l = len(self.level_board.board)
+        for row in range(l):
+            for entry in range(l):
+                # If it is not blank and it does not match the solution board, remove it
+                if (len(self.sudoku_entry[row][entry].get()) != 0 and int(self.sudoku_entry[row][entry].get()) != self.level_board.board[row][entry]):
+                    correct = False
+                    self.sudoku_entry[row][entry].delete(0, 'end')
+                elif (len(self.sudoku_entry[row][entry].get()) == 0 ):
+                    empty = True
         
-        print(break_line)
-        #create the content
-        for block_row in range(3):
-            for row in range(block_row * 3, (block_row + 1) * 3):
-                s = "|" # include the begin bar
-                for col in range(9):
-                    s = s + " "
-                    val = self.board[row][col]
+        if not correct:
+            self.status.set("Please try again!")
+        elif (empty):
+            self.status.set("You still have empty space to fill!")
+        else:
+            self.status.set("Great job!")
 
-                    if (val != 0):
-                        s = s + str(val) # print the value
-                    else :
-                        s = s + " "# If it is zero (means blank), then print nothing, but use space to format
 
-                    if (col % 3 == 2):
-                        s = s + " |" # Vertical line seperate the cell
-                print(s) # Print each line
-            print(break_line) # Print horizontal break line between cells
+    '''
+    Purpose: Put the game into next level
+    effect: modify entrys
+    '''
+    def next_level(self):
+        l = len(self.sudoku_entry)
+        self.status.set("Welcome to next level")
+        for row in range(l):
+            for entry in range(l):
+                self.sudoku_entry[row][entry].delete(0, 'end')
+        self.current_board = self.boardset()
+        self.level_board = Board.Board(self.current_board)
+        self.input_level()
+
+     
+    '''
+    Purpose: init_row(board_row) Return a 1D array of entry in tk which include one row of the board
+    Contract: list[] -> list[]
+    '''
+    def init_row (self, row_len):
+        temp_row = []
+        for i in range(row_len):
+            temp_row.append(tkinter.Entry(self.board_frame, font = 10, width = 3))
+        return temp_row
+
+
+    '''
+    Purpose: input_board(board) Modify the 2D array of entry to make a entry of the board
+    effect: modify sudoku_entry
+    Contarct: Board -> 
+    '''
+    def init_entry_array (self):
+        l = self.level_board.length
+        for board_row in range(l):
+            self.sudoku_entry.append(self.init_row(l))
+
+
+    '''
+    Purpose: add_to_screen(loe) Put everything is the list of entry to the screen
+    effect: modify the main_board
+    '''
+    def add_to_screen(self):
+        l = len(self.sudoku_entry)
+        for row in range(l):
+            for entry in range(l):
+                self.sudoku_entry[row][entry].grid(row = row, column = entry, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+
+    
+    '''
+    Purpose: add_solve_botton_to_screen() add the solve botton to the screen
+    effect: modify main_board()
+    '''
+    def add_solve_botton_to_screen(self):
+        self.solve_botton.grid(row = 1, column = 1, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+
+
+    '''   
+    Purpsoe: add_submit button to screen() add the submit botton for user to the screen
+    effect: modify main_board()
+    '''
+    def add_submit_botton_to_screen(self):
+        self.submit_botton.grid(row = 1, column = 2, padx = 10, pady = 10, ipadx = 20, ipady = 10)
+
+
+    '''
+    Purpose: add_status_text_to_screen() add a status bar to the screen, shows, weather you win, or still need to try or solved it
+    effect: modify main_board()
+    '''
+    def add_status_text_to_screen(self):
+        self.status_text.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+
+
+    #start the Sudolu solver program
+    def start(self):
+        #init the game
+        self.init_entry()
+        self.init_game()
+
+
+        self.input_level()
+        self.main_board.mainloop()
+
+
+    '''
+    Purpose: initlize the entry and ready for inputting level
+    effect: modify entry
+    '''
+    def init_entry(self):
+        self.init_entry_array()
+        self.add_to_screen()
+        self.board_frame.pack()
+
+
+    '''
+    Purpose: initlize the bottom and status bar
+    effect: modify entry
+    '''
+    def init_game(self):
+        self.add_solve_botton_to_screen()
+        self.add_submit_botton_to_screen()
+        self.add_status_text_to_screen()
+        self.bottom_frame.pack()
