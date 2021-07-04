@@ -31,4 +31,17 @@ b1 = [
     [1, 8, 9, 4, 3, 7, 2, 6, 5]
 ]
 
-level = [b]
+level = [b, b1]
+
+
+'''
+Purpose: call the next bord to allowed the forward proceed of the levels
+effect: modify entrys in GUI.py
+'''
+def next():
+    index = [-1]
+    def wapper():
+        index[0] += 1
+        return level[index[0]]
+    return wapper
+
