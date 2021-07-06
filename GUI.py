@@ -38,15 +38,16 @@ class GUI :
         self.status.set("Welcome to Sudoku Game")
         self.status_text = tkinter.Label(self.bottom_frame, textvariable=self.status)
 
-        self.submit_botton = tkinter.Button(self.bottom_frame, text = "submit!", command = (lambda: self.submit()), height = 1, width = 1)
-        self.solve_botton = tkinter.Button(self.bottom_frame, text = "solve!", command = (lambda: self.solve()), height = 1, width = 1)
+        self.submit_botton = tkinter.Button(self.bottom_frame, text = "Submit!", command = (lambda: self.submit()), height = 1, width = 1)
+        self.solve_botton = tkinter.Button(self.bottom_frame, text = "Solve!", command = (lambda: self.solve()), height = 1, width = 1)
+        self.next_level_botton = tkinter.Button(self.bottom_frame, text = "Next Level!", command = (lambda: self.next_level()), height = 1, width = 1)
 
 
     '''    
     Purpose input_level() input the level_board to the entrys
     effect: modify sudoku_entry
     '''
-    def input_level(self,):
+    def input_level(self):
         l = len(self.sudoku_entry)
         for row in range(l):
             for cell in range(l):
@@ -69,8 +70,6 @@ class GUI :
         self.status.set("The solution is presented")
         # need to learn why this is not working
         #time.sleep(5)
-        self.next_level()
-
 
     ''' 
     Purpose: submit() is a tkinter command to check if the answer matches the given answer
@@ -79,17 +78,25 @@ class GUI :
     def submit(self):
         correct = True
         empty = False
+        valid = True
         l = len(self.level_board.board)
         for row in range(l):
             for entry in range(l):
                 # If it is not blank and it does not match the solution board, remove it
-                if (len(self.sudoku_entry[row][entry].get()) != 0 and int(self.sudoku_entry[row][entry].get()) != self.level_board.board[row][entry]):
-                    correct = False
+                try :
+                    if (len(self.sudoku_entry[row][entry].get()) != 0 and int(self.sudoku_entry[row][entry].get()) != self.level_board.board[row][entry]):
+                        correct = False
+                        self.sudoku_entry[row][entry].delete(0, 'end')
+                    elif (len(self.sudoku_entry[row][entry].get()) == 0 ):
+                        empty = True
+                except ValueError :
+                    valid = False
                     self.sudoku_entry[row][entry].delete(0, 'end')
-                elif (len(self.sudoku_entry[row][entry].get()) == 0 ):
-                    empty = True
+
         
-        if not correct:
+        if not valid:
+            self.status.set("Invalid input, please try again")
+        elif not correct:
             self.status.set("Please try again!")
         elif (empty):
             self.status.set("You still have empty space to fill!")
@@ -154,11 +161,19 @@ class GUI :
 
 
     '''   
-    Purpsoe: add_submit button to screen() add the submit botton for user to the screen
+    Purpsoe: add_submit_button_to_screen() add the submit botton for user to the screen
     effect: modify main_board()
     '''
     def add_submit_botton_to_screen(self):
         self.submit_botton.grid(row = 1, column = 2, padx = 10, pady = 10, ipadx = 20, ipady = 10)
+
+
+    '''   
+    Purpsoe: add_next_level_button_to_screen() add the next_level botton for user to the screen
+    effect: modify main_board()
+    '''
+    def add_next_level_botton_to_screen(self):
+        self.next_level_botton.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 30, ipady = 10)
 
 
     '''
@@ -166,7 +181,7 @@ class GUI :
     effect: modify main_board()
     '''
     def add_status_text_to_screen(self):
-        self.status_text.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+        self.status_text.grid(row = 1, column = 4, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 
     #start the Sudolu solver program
@@ -174,8 +189,6 @@ class GUI :
         #init the game
         self.init_entry()
         self.init_game()
-
-
         self.input_level()
         self.main_board.mainloop()
 
@@ -197,5 +210,6 @@ class GUI :
     def init_game(self):
         self.add_solve_botton_to_screen()
         self.add_submit_botton_to_screen()
+        self.add_next_level_botton_to_screen()
         self.add_status_text_to_screen()
         self.bottom_frame.pack()
