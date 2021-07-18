@@ -5,7 +5,7 @@
 
 __author__ = "Austin Wei"
 
-import Board, tkinter, Temp_board, time
+import Board, tkinter, Temp_board, time, json
 
 class GUI :
 
@@ -15,11 +15,11 @@ class GUI :
         # the two frame, one is for the board, other for the bottoms
         self.board_frame = tkinter.Frame(self.main_board, width = 200, height = 200)
         self.bottom_frame = tkinter.Frame(self.main_board)
+        self.text_frame = thintker.Frame(self.main_board)
 
         #edit main_board
         self.main_board.title("Sudoku Solver")
         self.main_board.geometry('750x700')
-
 
         # the board that is showed in the game
         self.boardset = Temp_board.next()
@@ -41,6 +41,11 @@ class GUI :
         self.submit_botton = tkinter.Button(self.bottom_frame, text = "Submit!", command = (lambda: self.submit()), height = 1, width = 1)
         self.solve_botton = tkinter.Button(self.bottom_frame, text = "Solve!", command = (lambda: self.solve()), height = 1, width = 1)
         self.next_level_botton = tkinter.Button(self.bottom_frame, text = "Next Level!", command = (lambda: self.next_level()), height = 1, width = 1)
+        self.save_botton = tkinter.Button(self.bottom_frame, text = "Save!", command = (lambda: self.save()), height = 1, width = 1)
+        self.resume_botton = tkinter.Button(self.bottom_frame, text = "Resume!", command = (lambda: self.resume()), height = 1, width = 1)
+
+        # the file that will store the saved game and resume if needed
+        self.save_file = "Sudoku/saved.txt"
 
 
     '''    
@@ -118,7 +123,52 @@ class GUI :
         self.level_board = Board.Board(self.current_board)
         self.input_level()
 
-     
+
+    '''
+    Purpose: Save the current game, while delete the last save
+    effect: modify the save_file
+    '''
+    def save(self):
+        f = open(self.save_file, "w")
+        b = []
+        for row in self.sudoku_entry:
+            temp = []
+            for cell in row:
+                st = cell.get()
+                if(st != ""):
+                    temp.append(int(cell.get()))
+                else :
+                    temp.append(0)
+            b.append(temp)
+        jb = json.dumps(b)
+        f.write(jb)
+        f.write("\n")
+        f.close()
+
+
+    '''
+    Purpose: Resume the game from the last save
+    effect: modify the 
+    '''
+    def resume(self):
+        f = open(self.save_file, "r")
+        js = f.read()
+        board = json.loads(js)
+        self.current_board = board
+        self.level_board = Board.Board(self.current_board)
+        # clear up the board
+        l = len(self.sudoku_entry)
+        self.status.set("Welcome to next level")
+        for row in range(l):
+            for entry in range(l):
+                self.sudoku_entry[row][entry].delete(0, 'end')
+        self.input_level()
+
+        
+
+
+
+
     '''
     Purpose: init_row(board_row) Return a 1D array of entry in tk which include one row of the board
     Contract: list[] -> list[]
@@ -156,24 +206,12 @@ class GUI :
     Purpose: add_solve_botton_to_screen() add the solve botton to the screen
     effect: modify main_board()
     '''
-    def add_solve_botton_to_screen(self):
+    def add_bottons_to_screen(self):
         self.solve_botton.grid(row = 1, column = 1, padx = 10, pady = 10, ipadx = 10, ipady = 10)
-
-
-    '''   
-    Purpsoe: add_submit_button_to_screen() add the submit botton for user to the screen
-    effect: modify main_board()
-    '''
-    def add_submit_botton_to_screen(self):
         self.submit_botton.grid(row = 1, column = 2, padx = 10, pady = 10, ipadx = 20, ipady = 10)
-
-
-    '''   
-    Purpsoe: add_next_level_button_to_screen() add the next_level botton for user to the screen
-    effect: modify main_board()
-    '''
-    def add_next_level_botton_to_screen(self):
         self.next_level_botton.grid(row = 1, column = 3, padx = 10, pady = 10, ipadx = 30, ipady = 10)
+        self.save_botton.grid(row = 1, column = 4, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+        self.resume_botton.grid(row = 1, column = 5, padx = 10, pady = 10, ipadx = 20, ipady = 10)
 
 
     '''
@@ -181,7 +219,7 @@ class GUI :
     effect: modify main_board()
     '''
     def add_status_text_to_screen(self):
-        self.status_text.grid(row = 1, column = 4, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+        self.status_text.grid(row = 2, column = 1, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 
     #start the Sudolu solver program
@@ -208,8 +246,6 @@ class GUI :
     effect: modify entry
     '''
     def init_game(self):
-        self.add_solve_botton_to_screen()
-        self.add_submit_botton_to_screen()
-        self.add_next_level_botton_to_screen()
+        self.add_bottons_to_screen()
         self.add_status_text_to_screen()
         self.bottom_frame.pack()
