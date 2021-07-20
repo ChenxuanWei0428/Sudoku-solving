@@ -15,7 +15,7 @@ class GUI :
         # the two frame, one is for the board, other for the bottoms
         self.board_frame = tkinter.Frame(self.main_board, width = 200, height = 200)
         self.bottom_frame = tkinter.Frame(self.main_board)
-        self.text_frame = thintker.Frame(self.main_board)
+        self.text_frame = tkinter.Frame(self.main_board)
 
         #edit main_board
         self.main_board.title("Sudoku Solver")
@@ -29,14 +29,10 @@ class GUI :
         # this is a 2d list of tkinter.Entry
         self.sudoku_entry = []
 
-        # the two frame, one is for the board, other for the bottoms
-        self.board_frame = tkinter.Frame(self.main_board, width = 200, height = 200)
-        bottom_frame = tkinter.Frame(self.main_board)
-
         # the status_text
         self.status = tkinter.StringVar()
         self.status.set("Welcome to Sudoku Game")
-        self.status_text = tkinter.Label(self.bottom_frame, textvariable=self.status)
+        self.status_text = tkinter.Label(self.text_frame, textvariable=self.status)
 
         self.submit_botton = tkinter.Button(self.bottom_frame, text = "Submit!", command = (lambda: self.submit()), height = 1, width = 1)
         self.solve_botton = tkinter.Button(self.bottom_frame, text = "Solve!", command = (lambda: self.solve()), height = 1, width = 1)
@@ -129,6 +125,7 @@ class GUI :
     effect: modify the save_file
     '''
     def save(self):
+        self.status.set("Game Saved!")
         f = open(self.save_file, "w")
         b = []
         for row in self.sudoku_entry:
@@ -151,6 +148,7 @@ class GUI :
     effect: modify the 
     '''
     def resume(self):
+        self.status.set("Game Resumed!")
         f = open(self.save_file, "r")
         js = f.read()
         board = json.loads(js)
@@ -165,10 +163,6 @@ class GUI :
         self.input_level()
 
         
-
-
-
-
     '''
     Purpose: init_row(board_row) Return a 1D array of entry in tk which include one row of the board
     Contract: list[] -> list[]
@@ -219,7 +213,7 @@ class GUI :
     effect: modify main_board()
     '''
     def add_status_text_to_screen(self):
-        self.status_text.grid(row = 2, column = 1, padx = 10, pady = 10, ipadx = 10, ipady = 10)
+        self.status_text.grid(row = 1, column = 1, padx = 10, pady = 10, ipadx = 10, ipady = 10)
 
 
     #start the Sudolu solver program
@@ -249,3 +243,4 @@ class GUI :
         self.add_bottons_to_screen()
         self.add_status_text_to_screen()
         self.bottom_frame.pack()
+        self.text_frame.pack()
