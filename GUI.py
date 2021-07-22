@@ -138,8 +138,10 @@ class GUI :
                     temp.append(0)
             b.append(temp)
         jb = json.dumps(b)
+        jbs = json.dumps(self.level_board.board)
         f.write(jb)
         f.write("\n")
+        f.write(jbs)
         f.close()
 
 
@@ -150,7 +152,7 @@ class GUI :
     def resume(self):
         self.status.set("Game Resumed!")
         f = open(self.save_file, "r")
-        js = f.read()
+        js = f.readline()
         board = json.loads(js)
         self.current_board = board
         self.level_board = Board.Board(self.current_board)
@@ -161,6 +163,10 @@ class GUI :
             for entry in range(l):
                 self.sudoku_entry[row][entry].delete(0, 'end')
         self.input_level()
+        solution = f.readline()
+        board = json.loads(solution)
+        self.current_board = board
+        self.level_board = Board.Board(self.current_board)
 
         
     '''
